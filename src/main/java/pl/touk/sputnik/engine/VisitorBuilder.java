@@ -65,7 +65,12 @@ public class VisitorBuilder {
 
         addCommentVisitor(afterReviewVisitors, configuration, connectorFacade);
 
-        String passingComment = configuration.getProperty(GeneralOption.MESSAGE_SCORE_PASSING_COMMENT);
+        String passingComment = "";
+        if(Boolean.parseBoolean(
+            configuration.getProperty(GeneralOption.ENABLE_MESSAGE_SCORE_PASSING_COMMENT))) {
+                passingComment = configuration.getProperty(GeneralOption.MESSAGE_SCORE_PASSING_COMMENT);
+        }
+
         afterReviewVisitors.add(new SummaryMessageVisitor(passingComment));
 
         int maxNumberOfComments = NumberUtils.toInt(configuration.getProperty(GeneralOption.MAX_NUMBER_OF_COMMENTS), 0);
