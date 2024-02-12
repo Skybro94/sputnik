@@ -76,6 +76,16 @@ class VisitorBuilderTest {
     }
 
     @Test
+    void shouldNotPrintPerfectSummaryMessageIfDisabled() {
+        Configuration config = new ConfigurationSetup().setUp(ImmutableMap.of(
+                GeneralOption.MESSAGE_SCORE_PASSING_COMMENT.getKey(), "Perfect!",
+                GeneralOption.ENABLE_MESSAGE_SCORE_PASSING_COMMENT.getKey(), "false"
+        ));
+        assertThat(new VisitorBuilder().buildAfterReviewVisitors(config, connectorFacade))
+                .first().extracting("perfectMessage").isEqualTo("");
+    }
+
+    @Test
     void shouldBuildAfterVisitors() {
         Configuration config = new ConfigurationSetup().setUp(Collections.<String, String>emptyMap());
 
