@@ -113,7 +113,6 @@ class VisitorBuilderTest {
     }
 
     @Test
-    void p
       BuildDisabledAfterVisitors() {
         Configuration config = new ConfigurationSetup().setUp(ImmutableMap.of(
                 GeneralOption.MAX_NUMBER_OF_COMMENTS.getKey(), "0"
