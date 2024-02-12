@@ -15,6 +15,7 @@ import pl.touk.sputnik.engine.visitor.BeforeReviewVisitor;
 import pl.touk.sputnik.engine.visitor.FilterOutTestFilesVisitor;
 import pl.touk.sputnik.engine.visitor.LimitCommentVisitor;
 import pl.touk.sputnik.engine.visitor.RegexFilterFilesVisitor;
+import pl.touk.sputnik.engine.visitor.GlobFilterFilesVisitor;
 import pl.touk.sputnik.engine.visitor.SummaryMessageVisitor;
 import pl.touk.sputnik.engine.visitor.comment.GerritCommentVisitor;
 import pl.touk.sputnik.engine.visitor.comment.GerritFileDiffBuilder;
@@ -43,6 +44,7 @@ public class VisitorBuilder {
         List<BeforeReviewVisitor> beforeReviewVisitors = new ArrayList<>();
         addTestFilesFilterIfConfigured(configuration, beforeReviewVisitors);
         addRegexFilterIfConfigured(configuration, beforeReviewVisitors);
+        addGlobFilterIfConfigured(configuration, beforeReviewVisitors);
         return beforeReviewVisitors;
     }
 
@@ -56,6 +58,19 @@ public class VisitorBuilder {
         String fileRegex = configuration.getProperty(CliOption.FILE_REGEX);
         if (fileRegex != null) {
             beforeReviewVisitors.add(new RegexFilterFilesVisitor(fileRegex));
+        }
+    }
+
+    private void addGlobFilterIfConfigured(Configuration configuration, List<BeforeReviewVisitor> beforeReviewVisitors) {
+        String fileRegex = configuration.getProperty(CliOption.FILE_REGEX);
+        String fileGlob = configuration.getProperty(CliOption.GLOB_MATCH);
+
+        if(fileRegex != null && fileGlob != null) {
+            // If both are define, ignore glob and throw warning
+            log.warn("Both regex and Glob pattern defined; ignore Glob pattern");
+        }
+        else if (fileRegex == null && fileGlob != null) {
+            beforeReviewVisitors.add(new GlobFilterFilesVisitor(fileGlob));
         }
     }
 
