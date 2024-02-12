@@ -15,6 +15,7 @@ import pl.touk.sputnik.engine.visitor.AfterReviewVisitor;
 import pl.touk.sputnik.engine.visitor.FilterOutTestFilesVisitor;
 import pl.touk.sputnik.engine.visitor.LimitCommentVisitor;
 import pl.touk.sputnik.engine.visitor.RegexFilterFilesVisitor;
+import pl.touk.sputnik.engine.visitor.GlobFilterFilesVisitor;
 import pl.touk.sputnik.engine.visitor.SummaryMessageVisitor;
 import pl.touk.sputnik.engine.visitor.comment.GerritCommentVisitor;
 import pl.touk.sputnik.engine.visitor.score.NoScore;
@@ -76,23 +77,29 @@ class VisitorBuilderTest {
     }
 
     @Test
-    void shouldNotPrintPerfectSummaryMessageIfDisabled() {
+    void shouldAddGlobFilterToBeforeVisitorsWhenConfigured() {
         Configuration config = new ConfigurationSetup().setUp(ImmutableMap.of(
-                GeneralOption.MESSAGE_SCORE_PASSING_COMMENT.getKey(), "Perfect!",
-                GeneralOption.ENABLE_MESSAGE_SCORE_PASSING_COMMENT.getKey(), "false"
+                CliOption.GLOB_MATCH.getKey(), "myModule/*"
         ));
-        assertThat(new VisitorBuilder().buildAfterReviewVisitors(config, connectorFacade))
-                .first().extracting("perfectMessage").isEqualTo("");
+
+        assertThat(new VisitorBuilder().buildBeforeReviewVisitors(config))
+                .hasSize(1)
+                .extracting("class")
+                .containsExactly(GlobFilterFilesVisitor.class);
     }
 
     @Test
-    void shouldPrintPerfectSummaryMessageIfEnabled() {
+    void shouldNotAddGlobFilterToBeforeVisitorsWhenConfiguredWithRegex() {
         Configuration config = new ConfigurationSetup().setUp(ImmutableMap.of(
-                GeneralOption.MESSAGE_SCORE_PASSING_COMMENT.getKey(), "Perfect!",
-                GeneralOption.ENABLE_MESSAGE_SCORE_PASSING_COMMENT.getKey(), "true"
+                CliOption.GLOB_MATCH.getKey(), "myModule/*",
+                CliOption.FILE_REGEX.getKey(), "^myModule/.+"
         ));
-        assertThat(new VisitorBuilder().buildAfterReviewVisitors(config, connectorFacade))
-                .first().extracting("perfectMessage").isEqualTo("Perfect!");
+
+        assertThat(new VisitorBuilder().buildBeforeReviewVisitors(config))
+                .hasSize(1)
+                .extracting("class")
+                .containsExactly(RegexFilterFilesVisitor.class);
+
     }
 
     @Test
@@ -106,7 +113,8 @@ class VisitorBuilderTest {
     }
 
     @Test
-    void shouldNotBuildDisabledAfterVisitors() {
+    void p
+      BuildDisabledAfterVisitors() {
         Configuration config = new ConfigurationSetup().setUp(ImmutableMap.of(
                 GeneralOption.MAX_NUMBER_OF_COMMENTS.getKey(), "0"
         ));

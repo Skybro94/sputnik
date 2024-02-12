@@ -172,11 +172,12 @@ gradle run -Dexec.args="--conf example.properties --changeId 1234 --revisionId 4
 - Rafał Nowak
 - Filip Majewski
 
+
+
+
 ## License
 
 This project is licenced under Apache License.
 
-111
-222
-333
-444
+
+
