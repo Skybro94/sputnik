@@ -89,6 +89,19 @@ class VisitorBuilderTest {
     }
 
     @Test
+    void shouldNotAddGlobFilterToBeforeVisitorsWhenConfiguredWithRegex() {
+        Configuration config = new ConfigurationSetup().setUp(ImmutableMap.of(
+                CliOption.GLOB_MATCH.getKey(), "myModule/*",
+                CliOption.FILE_REGEX.getKey(), "^myModule/.+"
+        ));
+
+        assertThat(new VisitorBuilder().buildBeforeReviewVisitors(config))
+                .hasSize(1)
+                .extracting("class")
+                .containsExactly(RegexFilterFilesVisitor.class);
+    }
+
+    @Test
     void shouldBuildAfterVisitors() {
         Configuration config = new ConfigurationSetup().setUp(Collections.<String, String>emptyMap());
 
