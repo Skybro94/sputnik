@@ -32,6 +32,7 @@ public class CliWrapper {
         localOptions.addOption(buildOption(CliOption.BUILD_ID, true, false));
         localOptions.addOption(buildOption(CliOption.PROVIDER, true, false));
         localOptions.addOption(buildOption(CliOption.FILE_REGEX, true, false));
+        localOptions.addOption(buildOption(CliOption.GLOB_MATCH, true, false));
         localOptions.addOption(buildOption(CliOption.USERNAME, true, false));
         localOptions.addOption(buildOption(CliOption.PASSWORD, true, false));
 

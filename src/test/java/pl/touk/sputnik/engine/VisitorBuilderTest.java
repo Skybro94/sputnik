@@ -15,6 +15,7 @@ import pl.touk.sputnik.engine.visitor.AfterReviewVisitor;
 import pl.touk.sputnik.engine.visitor.FilterOutTestFilesVisitor;
 import pl.touk.sputnik.engine.visitor.LimitCommentVisitor;
 import pl.touk.sputnik.engine.visitor.RegexFilterFilesVisitor;
+import pl.touk.sputnik.engine.visitor.GlobFilterFilesVisitor;
 import pl.touk.sputnik.engine.visitor.SummaryMessageVisitor;
 import pl.touk.sputnik.engine.visitor.comment.GerritCommentVisitor;
 import pl.touk.sputnik.engine.visitor.score.NoScore;
@@ -73,6 +74,18 @@ class VisitorBuilderTest {
                 .hasSize(1)
                 .extracting("class")
                 .containsExactly(RegexFilterFilesVisitor.class);
+    }
+
+    @Test
+    void shouldAddGlobFilterToBeforeVisitorsWhenConfigured() {
+        Configuration config = new ConfigurationSetup().setUp(ImmutableMap.of(
+                CliOption.GLOB_MATCH.getKey(), "myModule/*"
+        ));
+
+        assertThat(new VisitorBuilder().buildBeforeReviewVisitors(config))
+                .hasSize(1)
+                .extracting("class")
+                .containsExactly(GlobFilterFilesVisitor.class);
     }
 
     @Test
